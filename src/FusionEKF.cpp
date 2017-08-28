@@ -9,8 +9,8 @@ using Eigen::VectorXd;
 using std::vector;
 
 /*
- * Constructor. AAAAA
- */ 
+ * Constructor.
+ */
 FusionEKF::FusionEKF() {
   is_initialized_ = false;
 
