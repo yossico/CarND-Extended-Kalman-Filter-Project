@@ -806,5 +806,8 @@
     <ClInclude Include="src\eigen\src\umfpacksupport\UmfPackSupport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ground_truth_package.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

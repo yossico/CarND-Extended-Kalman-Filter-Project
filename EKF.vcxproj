@@ -363,6 +363,7 @@
     <ClInclude Include="src\eigen\src\svd\UpperBidiagonalization.h" />
     <ClInclude Include="src\eigen\src\umfpacksupport\UmfPackSupport.h" />
     <ClInclude Include="src\FusionEKF.h" />
+    <ClInclude Include="src\ground_truth_package.h" />
     <ClInclude Include="src\json.hpp" />
     <ClInclude Include="src\kalman_filter.h" />
     <ClInclude Include="src\measurement_package.h" />

@@ -3,10 +3,13 @@
 #include <sstream>
 #include <vector>
 #include <stdlib.h>
+#include <math.h>
 #include "Eigen/Dense"
 #include "FusionEKF.h"
 #include "ground_truth_package.h"
 #include "measurement_package.h"
+
+#define M_PI acos(-1.0)
 
 using namespace std;
 using Eigen::MatrixXd;
