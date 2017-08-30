@@ -1,5 +1,8 @@
 #include "kalman_filter.h"
 #include <iostream>
+#include <vector>
+#include <string>
+#include <fstream>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -25,18 +28,23 @@ void KalmanFilter::Predict() {
 	P_ = F_*P_*Ft + Q_;
 }
 
+void KalmanFilter::UpdateCore(const VectorXd &y)
+{
+	MatrixXd I = MatrixXd::Identity(x_.size(), x_.size());
+	MatrixXd Ht = H_.transpose();
+	MatrixXd S_ = H_*P_*Ht + R_;
+	MatrixXd K = P_*Ht*S_.inverse();
+	//new state
+	x_ = x_ + K*y;
+	P_ = (I - (K*H_))*P_;
+}
+
 void KalmanFilter::Update(const VectorXd &z) {
   /** TODO: update the state by using Kalman Filter equations  */
 
     // KF Measurement update step
-	MatrixXd I = MatrixXd::Identity(4, 4);
-	VectorXd y = z - H_*x_;
-	MatrixXd Ht = H_.transpose();
-	MatrixXd S_ = H_*P_*Ht + R_;
-	MatrixXd K = P_*Ht*S_.inverse();
-	x_ = x_ + K*y;
-	P_ = (I - (K*H_))*P_;
-
+	VectorXd y = z - H_*x_;//z_pred = Hx
+	UpdateCore(y);
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
@@ -44,29 +52,25 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   //recover state parameters
 	float x = x_(0);
-	float y = x_(1);
+	float ys = x_(1);
 	float vx = x_(2);
 	float vy = x_(3);
 	
 	
-	float rho = sqrt(x*x + y*y);
-	float theta = atan2(y , x);
-	float rho_dot = ( x*vx + y*vy) / rho;
+	float rho = sqrt(x*x + ys*ys);
+	float theta = atan2(ys , x);
+	float rho_dot = ( x*vx + ys*vy) / rho;
 
 	if (fabs(rho) < 0.0001) {
-		cout << "CalculateJacobian () - Error - Division by Zero" << endl;
-		return;
+	//	cout << "CalculateJacobian () - Error - Division by Zero"; //<< endl;
+		rho = 0.0001;
 	}
-
 	VectorXd z_pred = VectorXd(3);
 	z_pred << rho, theta, rho_dot;
+	VectorXd y = z - z_pred;
 
-	VectorXd ym = z - z_pred;
 
-	MatrixXd I = MatrixXd::Identity(4, 4);
-	MatrixXd Ht = H_.transpose();
-	MatrixXd S_ = H_*P_*Ht + R_;
-	MatrixXd K = P_*Ht*S_.inverse();
-	x_ = x_ + K*ym;
-	P_ = (I - (K*H_))*P_;
+	UpdateCore(y);
+
 }
+
